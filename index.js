@@ -56,6 +56,24 @@ server.delete('/hubs/:id', (req, res) => {
     });
 });
 
+//update
+server.put('/hubs/:id', (req, res) => {
+    const { id } = req.params;
+    const user = req.body;
+
+    hubs.update(id, user)
+    .then(updatedHub => {
+        if (updatedHub) {
+            res.json(updatedHub)
+        } else {
+            res.status(404).json({ err: 'incorrect id'});
+        }
+    })
+    .catch(({ code, message }) => {
+        res.status(code).json({ err: message });
+    });
+});
+
 server.listen(9090, () => {
     console.log('Listening on port 9090');
 });
