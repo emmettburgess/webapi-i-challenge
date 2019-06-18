@@ -31,14 +31,27 @@ server.get('/hubs', (req, res) => {
     });
 });
 
-//create
+//create - add
 server.post('/hubs', (req, res) => {
     const newHub = req.body;
     hubs.add(newHub)
-    .then(createdhub => {
+    .then(addedHub => {
         res.status(201).json(addedHub)
     })
     .catch(({ code, message}) => {
+        res.status(code).json({ err: message});
+    });
+});
+
+//delete - destroy
+server.delete('/hubs/:id', (req, res) => {
+    const { id } = req.params;
+
+    hubs.remove(id)
+    .then(removedHub => {
+        res.json(removedHub);
+    })
+    .catch(({ code, message }) => {
         res.status(code).json({ err: message});
     });
 });

@@ -12,16 +12,6 @@ module.exports = {
   },
 };
 
-let _hubs = [
-  {
-    id: 1,
-    name: "Jane Doe",
-    bio: "Not Tarzan's wife, another Jane",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-]
-
 function find() {
   return db('users');
 }
