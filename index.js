@@ -6,6 +6,9 @@ const db = require('./data/db');
 const server = express();
 const { hubs } = db;
 
+//middleware
+server.use(express.json());
+
 //endpoints
 server.get('/', (req, res) => {
 
@@ -24,7 +27,19 @@ server.get('/hubs', (req, res) => {
     .then(allHubs => {
         res.json(allHubs);
     }).catch(err => {
-        res.status(500).send(err);
+        res.status(500).json(err);
+    });
+});
+
+//create
+server.post('/hubs', (req, res) => {
+    const newHub = req.body;
+    hubs.add(newHub)
+    .then(createdhub => {
+        res.status(201).json(addedHub)
+    })
+    .catch(({ code, message}) => {
+        res.status(code).json({ err: message});
     });
 });
 
