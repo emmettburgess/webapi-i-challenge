@@ -1,79 +1,82 @@
-// implement your API here
 const express = require('express');
-const db = require('./data/seeds/users');
 
+const db = require('./data/db.js');
 
 const server = express();
-const { users } = db;
 
-//middleware
 server.use(express.json());
 
-//endpoints
 server.get('/', (req, res) => {
-
-    res.send('<h2>Hello World</h2>')
+    res.send("It's alive!");
 });
 
-//current date
-server.get('/now', (req, res) => {
-    const now = new Date().toISOString();
-    res.send(now);
+server.get('/api/users', (req, res) => {
+db
+.find()
+.then(users => {
+    res.status(200).json(users)
+}).catch(err => {
+    //handle error
+    res.status(400).json({ error: err, errorMessage: 'Please provide name and bio for the user.' });
+});
 });
 
-//read
-server.get('/users', (req, res) => {
-    users.find()
-    .then(allUsers => {
-        res.json(allUsers);
+server.get('/api/users/:id', (req, res) => {
+    db
+    .findById()
+    .then(user => {
+        res.status(200).json(user)
     }).catch(err => {
-        res.status(500).json(err);
+        //handle error
+        res.status(404).json({ error: err, errorMessage: 'The user with the specified ID does not exist.' });
     });
-});
+})
 
-//create - add
-server.post('/users', (req, res) => {
-    const newUser = req.body;
-    hubs.add(newUser)
-    .then(addedUser => {
-        res.status(201).json(addedUser)
+server.post('/api/users', (req, res) => {
+
+    const userInformation = req.body;
+    console.log('request body', userInformation)
+
+    db
+    .insert(userInformation)
+    .then(user => {
+        res.status(201).json(user)
     })
-    .catch(({ code, message }) => {
-        res.status(code).json({ err: message});
+    .catch(err => {
+        //handle error
+        res.status(500).json({ error: err, message: 'Error adding user' });
     });
 });
 
-//delete - destroy
-server.delete('/users/:id', (req, res) => {
-    const { id } = req.params;
+server.delete('/api/users/:id', (req, res) => {
 
-    users.remove(id)
-    .then(removedUser => {
-        res.json(removedUser);
+    const userId = req.params.id
+    db
+    .remove(userId)
+    .then(deleted => {
+        res.status(200).json(deleted)
     })
-    .catch(({ code, message }) => {
-        res.status(code).json({ err: message});
+    .catch(err => {
+        //handle error
+        res.status(500).json({ error: err, message: 'Error adding user' });
     });
-});
+})
 
-//update
-server.put('/users/:id', (req, res) => {
-    const { id } = req.params;
-    const user = req.body;
+server.put('/api/users/:id', (req, res) => {
 
-    hubs.update(id, user)
+    const userId = req.params.id
+    db
+    .update(userId, updatedUser)
     .then(updatedUser => {
-        if (updatedUser) {
-            res.json(updatedUser)
-        } else {
-            res.status(404).json({ err: 'incorrect id'});
-        }
+        res.status(200).json(updatedUser)
     })
-    .catch(({ code, message }) => {
-        res.status(code).json({ err: message });
+    .catch(err => {
+        //handle error
+        res.status(500).json({ error: err, message: 'The user information could not be modified.' });
     });
-});
+})
+
 
 server.listen(9090, () => {
-    console.log('Listening on port 9090');
+    console.log('API Running on port 9090')
 });
