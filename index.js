@@ -1,10 +1,10 @@
 // implement your API here
 const express = require('express');
-const db = require('./data/db');
+const db = require('./data/seeds/users');
 
 
 const server = express();
-const { hubs } = db;
+const { users } = db;
 
 //middleware
 server.use(express.json());
@@ -22,34 +22,34 @@ server.get('/now', (req, res) => {
 });
 
 //read
-server.get('/hubs', (req, res) => {
-    hubs.find()
-    .then(allHubs => {
-        res.json(allHubs);
+server.get('/users', (req, res) => {
+    users.find()
+    .then(allUsers => {
+        res.json(allUsers);
     }).catch(err => {
         res.status(500).json(err);
     });
 });
 
 //create - add
-server.post('/hubs', (req, res) => {
-    const newHub = req.body;
-    hubs.add(newHub)
-    .then(addedHub => {
-        res.status(201).json(addedHub)
+server.post('/users', (req, res) => {
+    const newUser = req.body;
+    hubs.add(newUser)
+    .then(addedUser => {
+        res.status(201).json(addedUser)
     })
-    .catch(({ code, message}) => {
+    .catch(({ code, message }) => {
         res.status(code).json({ err: message});
     });
 });
 
 //delete - destroy
-server.delete('/hubs/:id', (req, res) => {
+server.delete('/users/:id', (req, res) => {
     const { id } = req.params;
 
-    hubs.remove(id)
-    .then(removedHub => {
-        res.json(removedHub);
+    users.remove(id)
+    .then(removedUser => {
+        res.json(removedUser);
     })
     .catch(({ code, message }) => {
         res.status(code).json({ err: message});
@@ -57,14 +57,14 @@ server.delete('/hubs/:id', (req, res) => {
 });
 
 //update
-server.put('/hubs/:id', (req, res) => {
+server.put('/users/:id', (req, res) => {
     const { id } = req.params;
     const user = req.body;
 
     hubs.update(id, user)
-    .then(updatedHub => {
-        if (updatedHub) {
-            res.json(updatedHub)
+    .then(updatedUser => {
+        if (updatedUser) {
+            res.json(updatedUser)
         } else {
             res.status(404).json({ err: 'incorrect id'});
         }
