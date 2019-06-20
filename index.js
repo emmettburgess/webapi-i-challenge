@@ -77,6 +77,6 @@ server.put('/api/users/:id', (req, res) => {
 })
 
 
-server.listen(9090, () => {
-    console.log('API Running on port 9090')
+server.listen(process.env.PORT || 9090, () => {
+    console.log('API Running')
 });
